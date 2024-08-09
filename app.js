@@ -238,7 +238,7 @@ servidor.post('/treino/analisedenotas', (req,resp) => {
 
     let soma = n1 + n2 + n3 + n4 + n5 
 
-    let notas = []
+    let notas = [n1, n2, n3, n4 , n5]
     let maiorNota = notas / soma.length
     let menorNota = Infinity
 
