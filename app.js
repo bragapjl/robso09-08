@@ -151,6 +151,19 @@ servidor.get('/coress', (req,resp) => {
     }
 })
 
+servidor.post('/tabuada', (req,resp) => {
+    let nums = req.body.tabuada 
+    
+    let nums2 = []
+    for(let i = 0; i < nums.length; i++){
+        nums2[i] = nums[i] 
+    }
+
+    resp.send({
+        numeros: nums2
+    })
+})
+
 
 
 
