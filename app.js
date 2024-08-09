@@ -4,7 +4,7 @@ servidor.use(express.json())
 
 //parametro de rota
 
-servidor.get('/acaizaobrabo/:n1/:n2/:n3', (req,resp) => {
+servidor.get('/treino/acaizaobrabo/:n1/:n2/:n3', (req,resp) => {
 
     let qtdpequeno = Number(req.params.n1)
     let qtdmedio = Number(req.params.n2)
@@ -40,7 +40,7 @@ servidor.get('/acai/preco/', (req,resp) => {
 })
 
 //parametro de corpoo(body)
-servidor.post('/acaibolado', (req, resp) => {
+servidor.post('/treino/acaibolado', (req, resp) => {
 
     let qtdpequeno = Number(req.body.qtdpequeno)
     let qtdmedio = Number(req.body.qtdmedio)
@@ -59,7 +59,7 @@ servidor.post('/acaibolado', (req, resp) => {
 
 //media com rota
 
-servidor.get('/media/:n1/:n2/:n3', (req,resp) => {
+servidor.get('/treino/media/:n1/:n2/:n3', (req,resp) => {
     let nota1 = Number(req.params.n1)
     let nota2 = Number(req.params.n2)
     let nota3 = Number(req.params.n3)
@@ -120,11 +120,14 @@ servidor.post('/treino/leituralivro', (req,resp) => {
     }
 })
 
-servidor.get('/coress', (req,resp) => {
+servidor.get('/treino/coress', (req,resp) => {
     const combinacaoCor = {
         "azul:amarelo": "verde",
+        "amarelo:azul": "verde",
         "amarelo:vermelho": "laranja",
-        "vermelho:azul": "roxo"
+        "vermelho:amarelo": "laranja",
+        "vermelho:azul": "roxo",
+        "azul:vermelho": "roxo"
       }
 
       const coresPrimarias = ["amarelo", "vermelho", "azul"]
@@ -151,18 +154,102 @@ servidor.get('/coress', (req,resp) => {
     }
 })
 
-servidor.post('/tabuada', (req,resp) => {
-    let nums = req.body.tabuada 
+servidor.post('/treino/cinema/validacao', (req,resp) => {
+        try {
+            if(isNaN(req.body.idadePessoa1)){
+                throw new Error('verifique a idade de uma das pessoas')
+            }
     
+            if(isNaN(req.body.idadePessoa2)){
+                throw new Error('verifique a idade de uma das pessoas')
+            }
+    
+            if(!req.body.classificacao){
+                throw new Error('O parametro classificacao está incorreto')
+            }
+    
+    
+            let idade1 = Number(req.body.idadePessoa1);
+            let idade2 = Number(req.body.idadePessoa2);
+            let clas = Number(req.body.classificacao);
+    
+            let poder = true
+    
+            if(idade1 < clas || idade2 < clas){
+                poder = false
+               return resp.send({
+                    podemAssistir: poder
+                })
+            }
+    
+            resp.send({
+                podemAssistir: poder
+            })
+        } 
+    
+        catch (err){
+            return resp.status(400).send({
+                erro: err.message
+            })
+        }
+    })
+
+
+servidor.get('/treino/tabuada/:n1', (req,resp) => {
+    let nums = req.params.n1
     let nums2 = []
-    for(let i = 0; i < nums.length; i++){
-        nums2[i] = nums[i] 
+    for(let i = 0; i < 11; i++){
+        nums2[i] = nums * i
     }
 
     resp.send({
-        numeros: nums2
+        tabuada: nums2
     })
 })
+
+
+servidor.post('/treino/ordenacao', (req,resp) => {
+    let n1 = req.body.ordem[0]
+    let n2 = req.body.ordem[1]
+    let n3 = req.body.ordem[2]
+
+    let ordem = ''
+    if(n1 < n2 && n1 < n3 && n2 > n1 && n2 < n3){
+        ordem = 'crescente'
+    }
+    else if(n1 > n2 && n1 > n3 && n2 > n3 && n2 < n1){
+        ordem = 'decrescente'
+    }else {
+        ordem = 'desordenada'
+    }
+
+    resp.send({
+        ordem: ordem
+    })
+})
+
+servidor.post('/treino/analisedenotas', (req,resp) => {
+
+    let n1 = req.body.n1[0]
+    let n2 = req.body.n2[1]
+    let n3 = req.body.n3[2]
+    let n4 = req.body.n4[3]
+    let n5 = req.body.n5[4]
+
+    let soma = n1 + n2 + n3 + n4 + n5 
+
+    let notas = []
+    let maiorNota = notas / soma.length
+    let menorNota = Infinity
+
+    resp.send({
+        notas: notas,
+        maior: maiorNota,
+        menor: menorNota
+    })
+})
+
+
 
 
 
